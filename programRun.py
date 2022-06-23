@@ -33,6 +33,12 @@ comboReady = False
 
 players = [player.player() for _ in range(NUM_PLAYERS)]
 
+def background_moozic():
+    while True:
+        print("EEE")
+        playsound.playsound("If I Had A Chicken.mp3")
+
+
 
 def run(width=1920, height=1080):
     def redrawAllWrapper(canvas, data):
@@ -105,10 +111,12 @@ def run(width=1920, height=1080):
                     maxCombo[1])
                 removedLetters = letterBag.removeLetters(len(maxCombo[1]))
                 x.changeLetterBagSize(len(letterBag.letterBag))
+
                 players[trnctr].addToHand(removedLetters)
                 data.message1 = f"Computer #{trnctr + 1} - " + \
                     " Letters used: " + str(maxCombo[1])
                 data.message2 = f"Earned: {maxCombo[0]}, Total Score: {players[trnctr].points}"
+
                 x.changeLetterHand(
                     players[trnctr].letterHand)
                 redrawAllWrapper(canvas, data)
@@ -121,6 +129,7 @@ def run(width=1920, height=1080):
                 players[trnctr].addToHand(removedLetters)
                 letterBag.letterBag += letters
                 x.changeLetterHand(
+
                     players[trnctr].letterHand)
 
             trnctr = (trnctr + 1) % NUM_PLAYERS
@@ -169,7 +178,6 @@ def run(width=1920, height=1080):
     redrawAllWrapper(canvas, x.data)    # this is to show the interface
     root.bind("<Button-1>", lambda event: mousePressedWrapper(event, canvas, x.data))
     root.bind("<Key>", lambda event: keyPressedWrapper(event, canvas, x.data))
-    # and launch the app
 
     threading.Thread(target=background_moozic, daemon=True).start()
     threading.Thread(target=worker_thread, daemon=True).start()

@@ -13,4 +13,5 @@ class player():
     def playFromHand(self, letters):
         for letter in letters:
             index = self.letterHand.find(letter)
-            self.letterHand = self.letterHand[:index] + self.letterHand[index+1:]
+            self.letterHand = self.letterHand[:index] + \
+                self.letterHand[index+1:]
