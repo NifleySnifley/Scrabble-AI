@@ -7,9 +7,11 @@ import boardKeeper as BK
 import letterBag as LB
 import helper
 from tkinter import *
+import pyautogui
+
+from dataStorage import boardKeeper
 
 # all of the big classes
-boardKeeper = BK.boardKeeper()
 humanPlayer = player.player()
 computerPlayer = player.player()
 humanCheck = HC.humanChecker()
@@ -54,11 +56,13 @@ def run(width=1920, height=1080):
             else:
                 x.data.message2 = "It's a tie"
 
-        elif True:  # x.data.computerTurn:
+        else:
             # case of computer turn
             t1 = (trnctr % 2) == 1
             trnctr += 1
             print(trnctr)
+
+            p = computerPlayer if t1 else humanPlayer
 
             x.data.message1 = "It's the computer's turn"
             x.data.message2 = 'Waiting for the computer...'
@@ -69,7 +73,7 @@ def run(width=1920, height=1080):
             attachments = set(boardKeeper.refreshAttachments())
 
             computerCheck.changeLetterHand(
-                (computerPlayer if t1 else humanPlayer).letterHand)
+                p.letterHand)
             computerCheck.getLetterCombos()
             workingCombos = computerCheck.getDirectedCombos(
                 boardKeeper.board, occupied, attachments, dictionary)
@@ -77,45 +81,40 @@ def run(width=1920, height=1080):
             if maxCombo[0] != -1:
                 x.refreshSpecialTiles(
                     EV.tripleWord, EV.doubleWord, EV.quadWord, EV.doubleLetter, EV.tripleLetter, EV.quadLetter)
-                boardKeeper.changeBoard(maxCombo[1], maxCombo[2])
+                boardKeeper.changeBoard(
+                    maxCombo[1], maxCombo[2], 1 if t1 else 0)
                 x.computerChangeBoard(
                     boardKeeper.board, maxCombo[1], maxCombo[2])
-                (computerPlayer if t1 else humanPlayer).addPoints(maxCombo[0])
+                p.addPoints(maxCombo[0])
                 x.changeScore(
-                    (computerPlayer if t1 else humanPlayer).points, t1)
-                (computerPlayer if t1 else humanPlayer).playFromHand(
+                    p.points, t1)
+                p.playFromHand(
                     maxCombo[1])
                 removedLetters = letterBag.removeLetters(len(maxCombo[1]))
                 x.changeLetterBagSize(len(letterBag.letterBag))
-                (computerPlayer if t1 else humanPlayer).addToHand(removedLetters)
+                p.addToHand(removedLetters)
                 data.message1 = "Score: " + \
                     str(maxCombo[0]) + ", Letters used: " + str(maxCombo[1])
 
                 x.changeLetterHand(
-                    (computerPlayer if t1 else humanPlayer).letterHand)
+                    p.letterHand)
             else:
                 x.data.message1 = 'The computer was forced to pass.'
-                letters = (computerPlayer if t1 else humanPlayer).letterHand
-                (computerPlayer if t1 else humanPlayer).playFromHand(letters)
+                letters = p.letterHand
+                p.playFromHand(letters)
                 removedLetters = letterBag.removeLetters(7)
-                (computerPlayer if t1 else humanPlayer).addToHand(removedLetters)
+                p.addToHand(removedLetters)
                 letterBag.letterBag += letters
                 x.changeLetterHand(
-                    (computerPlayer if t1 else humanPlayer).letterHand)
+                    p.letterHand)
             # x.data.computerTurn = !x.data.data
             # x.data.humanTurn = False
 
-            if len((computerPlayer if t1 else humanPlayer).letterHand) == 0:
+            if len(p.letterHand) == 0:
                 x.data.endOfGame == True    # reached end of game
 
-        else:
-            x.data.message1 = "It's the human's turn"
-            x.data.message2 = 'Click on a blue box.'
-            x.data.humanTurn = True
-            x.data.computerTurn = False
-
         redrawAllWrapper(canvas, data)
-
+        # Keep playing (yes I know doing this recursively is STUPID, but its easy and fun)
         mousePressedWrapper(event, canvas, data)
 
     def keyPressedWrapper(event, canvas, data):
@@ -151,7 +150,10 @@ def run(width=1920, height=1080):
     root.bind("<Button-1>", lambda event: mousePressedWrapper(event, canvas, x.data))
     root.bind("<Key>", lambda event: keyPressedWrapper(event, canvas, x.data))
     # and launch the app
+
     while not x.data.endOfGame:
+        # mousePressedWrapper(None, canvas, x.data)
+        pyautogui.click(root.winfo_x() + 100, root.winfo_y() + 100)
         root.mainloop()  # blocks until window is closed
     print("bye!")
 

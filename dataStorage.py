@@ -1,5 +1,6 @@
-import boardKeeper
+import boardKeeper as BK
 import extraValue as EV
+boardKeeper = BK.boardKeeper()
 
 
 class dataStorage():
@@ -21,13 +22,14 @@ class dataStorage():
         self.data.quadWordFill = "#ec2121"
 
         self.data.occupiedSquareFill = "magenta"
+        self.data.occupiedSquareFills = ["#66FF66", "#FF5555"]
         self.data.handSquareFill = "#66DDDD"
         self.data.squareSize = 23
 
         # for the scrabble board
         self.data.emptyBoardLocations = []
         self.data.board = ''
-        for i in range(boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE):
+        for i in range(BK.BOARDSIZE*BK.BOARDSIZE):
             self.data.emptyBoardLocations.append(
                 i)  # fills this with every location
             self.data.board += '-'      # would normally be taken from boardMaker
@@ -295,11 +297,11 @@ class dataStorage():
 
     def mousePressed(self, event):
         column = ((event.x - self.data.squareLeft) // self.data.squareSize)
-        if (column > (boardKeeper.BOARDSIZE-1) or column < 0):
+        if (column > (BK.BOARDSIZE-1) or column < 0):
             # if outside of board, column is only used for the board
-            column = (boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE)
+            column = (BK.BOARDSIZE*BK.BOARDSIZE)
         row = ((event.y - self.data.squareTop) // self.data.squareSize)
-        spot = row*boardKeeper.BOARDSIZE + column          # spot in grid
+        spot = row*BK.BOARDSIZE + column          # spot in grid
         onTemporarySpot = spot in self.data.temporaryBoardLocations
         onEmptySpot = spot in self.data.emptyBoardLocations
 
@@ -403,7 +405,7 @@ class dataStorage():
         data = self.data
 
         spotList = []           # used to make a list of spots for the board
-        for i in range(boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE):
+        for i in range(BK.BOARDSIZE*BK.BOARDSIZE):
             spotList.append(i)
 
         # instruction background
@@ -412,8 +414,8 @@ class dataStorage():
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
 
         for (letter, spot) in zip(data.board, spotList):
-            row = spot // boardKeeper.BOARDSIZE
-            column = spot % boardKeeper.BOARDSIZE
+            row = spot // BK.BOARDSIZE
+            column = spot % BK.BOARDSIZE
             letter = data.board[spot]
             if spot in data.emptyBoardLocations:
                 if spot in data.tripleWord:
@@ -436,7 +438,7 @@ class dataStorage():
                 elif spot in data.quadWord:
                     self.drawBoardSquare(
                         canvas, row, column, letter, data.quadWordFill)
-                elif spot == ((boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE)//2):
+                elif spot == ((BK.BOARDSIZE*BK.BOARDSIZE)//2):
                     self.drawBoardSquare(
                         canvas, row, column, letter, "#28d122")
                 else:
@@ -448,7 +450,7 @@ class dataStorage():
             else:
                 # for occupied squares
                 self.drawBoardSquare(canvas, row, column,
-                                     letter, data.occupiedSquareFill)
+                                     letter, data.occupiedSquareFills[boardKeeper.spaceOccupations[spot]])
 
         # draw the letter hand
         canvas.create_text(data.dataCenter+2, 345,
