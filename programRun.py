@@ -1,3 +1,4 @@
+import threading
 import dataStorage as DS
 import computerWordChecker as CWC
 import humanChecker as HC
@@ -8,6 +9,9 @@ import letterBag as LB
 import helper
 from tkinter import *
 import pyautogui
+import playsound
+import colorsys
+
 
 from dataStorage import boardKeeper
 
@@ -26,6 +30,10 @@ doc.close()
 
 trnctr = 0
 
+def background_moozic():
+    while True:
+        print("EEE")
+        playsound.playsound("If I Had A Chicken.mp3")
 
 def run(width=1920, height=1080):
     def redrawAllWrapper(canvas, data):
@@ -79,6 +87,7 @@ def run(width=1920, height=1080):
                 boardKeeper.board, occupied, attachments, dictionary)
             maxCombo = EV.maxComboValue(workingCombos, boardKeeper.board)
             if maxCombo[0] != -1:
+                playsound.playsound("place.mp3")
                 x.refreshSpecialTiles(
                     EV.tripleWord, EV.doubleWord, EV.quadWord, EV.doubleLetter, EV.tripleLetter, EV.quadLetter)
                 boardKeeper.changeBoard(
@@ -150,7 +159,9 @@ def run(width=1920, height=1080):
     root.bind("<Button-1>", lambda event: mousePressedWrapper(event, canvas, x.data))
     root.bind("<Key>", lambda event: keyPressedWrapper(event, canvas, x.data))
     # and launch the app
-
+    
+    threading.Thread(target=background_moozic, daemon=True).start()
+    playsound.playsound("dump.mp3")
     while not x.data.endOfGame:
         # mousePressedWrapper(None, canvas, x.data)
         pyautogui.click(root.winfo_x() + 100, root.winfo_y() + 100)

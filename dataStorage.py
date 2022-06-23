@@ -1,3 +1,5 @@
+import colorsys
+from random import random
 import boardKeeper as BK
 import extraValue as EV
 boardKeeper = BK.boardKeeper()
@@ -409,7 +411,7 @@ class dataStorage():
             spotList.append(i)
 
         # instruction background
-        canvas.create_rectangle(0, 0, 1920, 1080, fill=data.backgroundFill)
+        canvas.create_rectangle(0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.5)])}")
         canvas.create_rectangle(
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
 
