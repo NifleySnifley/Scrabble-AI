@@ -25,7 +25,7 @@ doc.close()
 trnctr = 0
 
 
-def run(width=1000, height=600):
+def run(width=1920, height=1080):
     def redrawAllWrapper(canvas, data):
         canvas.delete(ALL)
         canvas.create_rectangle(
@@ -34,6 +34,15 @@ def run(width=1000, height=600):
         canvas.update()
 
     def mousePressedWrapper(event, canvas, data):
+        # column = ((event.x - x.data.squareLeft) // x.data.squareSize)
+        # if (column > (BK.BOARDSIZE-1) or column < 0):
+        #     # if outside of board, column is only used for the board
+        #     column = BK.BOARDSIZE*BK.BOARDSIZE
+        # row = ((event.y - x.data.squareTop) // x.data.squareSize)
+        # spot = row*BK.BOARDSIZE + column
+        # print(str(spot) + ',')
+        # return
+
         global trnctr
         if x.data.endOfGame:
             # end of game scenario
@@ -67,7 +76,7 @@ def run(width=1000, height=600):
             maxCombo = EV.maxComboValue(workingCombos, boardKeeper.board)
             if maxCombo[0] != -1:
                 x.refreshSpecialTiles(
-                    EV.tripleWord, EV.doubleWord, EV.doubleLetter, EV.tripleLetter)
+                    EV.tripleWord, EV.doubleWord, EV.quadWord, EV.doubleLetter, EV.tripleLetter, EV.quadLetter)
                 boardKeeper.changeBoard(maxCombo[1], maxCombo[2])
                 x.computerChangeBoard(
                     boardKeeper.board, maxCombo[1], maxCombo[2])
@@ -122,8 +131,8 @@ def run(width=1000, height=600):
     data.endOfGame = False
     x = DS.dataStorage(data)
     # initialize special tiles in dataStorage
-    x.refreshSpecialTiles(EV.tripleWord, EV.doubleWord,
-                          EV.doubleLetter, EV.tripleLetter)
+    x.refreshSpecialTiles(EV.tripleWord, EV.doubleWord, EV.quadWord,
+                          EV.doubleLetter, EV.tripleLetter, EV.quadLetter)
     # creates hands for both players
     removedLetters = letterBag.removeLetters(7)
     humanPlayer.addToHand(removedLetters)

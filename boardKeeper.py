@@ -1,22 +1,11 @@
+BOARDSIZE = 21
+
+
 class boardKeeper():
 
     def __init__(self):
-        row1  = "---------------"
-        row2  = "---------------"
-        row3  = "---------------"
-        row4  = "---------------"
-        row5  = "---------------"
-        row6  = "---------------"
-        row7  = "---------------"
-        row8  = "---------------"
-        row9  = "---------------"
-        row10 = "---------------"
-        row11 = "---------------"
-        row12 = "---------------"
-        row13 = "---------------"
-        row14 = "---------------"
-        row15 = "---------------"
-        self.board = row1 + row2 + row3 + row4 + row5 + row6 + row7 + row8 + row9 + row10 + row11 + row12 + row13 + row14 + row15
+        # 21x21
+        self.board = "-" * (BOARDSIZE*BOARDSIZE)
 
     def changeBoard(self, letterCombo, spaceCombo):
         for (letter, space) in zip(letterCombo, spaceCombo):
@@ -26,10 +15,10 @@ class boardKeeper():
         ''' Prints the board with either an error or a passing statement '''
         board = self.board
         print('Here is the current board situation.')
-        for row in range( int(len(board)//15) ):
+        for row in range(int(len(board)//BOARDSIZE)):
             # print(row, end = ' ')  ## for future extension
-            for column in range(15):
-                print(board[15*row + column], end = ' ')
+            for column in range(BOARDSIZE):
+                print(board[BOARDSIZE*row + column], end=' ')
             print('')
 
     def refreshOccupied(self):
@@ -48,25 +37,25 @@ class boardKeeper():
 
         for i in range(len(board)):
             if board[i] not in '-23@#':
-                row = i//15
-                column = i%15
+                row = i//BOARDSIZE
+                column = i % BOARDSIZE
                 # space directions
-                down = (row-1)*15 + column
-                up = (row+1)*15 + column
-                left = row*15 + column-1
-                right = row*15 + column+1
-                
+                down = (row-1)*BOARDSIZE + column
+                up = (row+1)*BOARDSIZE + column
+                left = row*BOARDSIZE + column-1
+                right = row*BOARDSIZE + column+1
+
                 # attachments are added
                 if (row != 0) and (board[down] in '-23@#') and (down not in attachments):
                     attachments.add(down)
-                if (row != 14) and (board[up] in '-23@#') and (up not in attachments):
+                if (row != (BOARDSIZE-1)) and (board[up] in '-23@#') and (up not in attachments):
                     attachments.add(up)
                 if (column != 0) and (board[left] in '-23@#') and (left not in attachments):
                     attachments.add(left)
-                if (column != 14) and (board[right] in '-23@#') and (right not in attachments):
+                if (column != (BOARDSIZE-1)) and (board[right] in '-23@#') and (right not in attachments):
                     attachments.add(right)
 
         if len(attachments) == 0:
-            attachments.add(112)
-        
+            attachments.add((BOARDSIZE*BOARDSIZE) // 2)
+
         return attachments

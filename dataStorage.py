@@ -1,3 +1,7 @@
+import boardKeeper
+import extraValue as EV
+
+
 class dataStorage():
 
     def __init__(self, data):
@@ -8,18 +12,22 @@ class dataStorage():
         self.data.backgroundFill = "#F5CDCD"
         self.data.instructionFill = "#F5FDFD"
         self.data.emptySquareFill = "#E5FDFD"
-        self.data.tripleWordFill = "red"
-        self.data.doubleWordFill = "orange"
-        self.data.doubleLetterFill = "yellow"
-        self.data.tripleLetterFill = "green"
+
+        self.data.tripleWordFill = "#ff5500"
+        self.data.doubleWordFill = "#FFA0A0"
+        self.data.doubleLetterFill = "#84cce2"
+        self.data.tripleLetterFill = "#5680e4"
+        self.data.quadLetterFill = "#1d36f9"
+        self.data.quadWordFill = "#ec2121"
+
         self.data.occupiedSquareFill = "magenta"
         self.data.handSquareFill = "#66DDDD"
-        self.data.squareSize = 32
+        self.data.squareSize = 23
 
         # for the scrabble board
         self.data.emptyBoardLocations = []
         self.data.board = ''
-        for i in range(225):
+        for i in range(boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE):
             self.data.emptyBoardLocations.append(
                 i)  # fills this with every location
             self.data.board += '-'      # would normally be taken from boardMaker
@@ -43,8 +51,10 @@ class dataStorage():
 
         self.data.tripleWord = []
         self.data.doubleWord = []
+        self.data.quadWord = []
         self.data.doubleLetter = []
         self.data.tripleLetter = []
+        self.data.quadLetter = []
 
         self.data.humanTurn = False
         self.data.computerTurn = False
@@ -121,11 +131,13 @@ class dataStorage():
 
         self.data.emptyHandLocations = []
 
-    def refreshSpecialTiles(self, tw, dw, dl, tl):
+    def refreshSpecialTiles(self, tw, dw, qw, dl, tl, ql):
         self.data.tripleWord = tw
         self.data.doubleWord = dw
+        self.data.quadWord = qw
         self.data.doubleLetter = dl
         self.data.tripleLetter = tl
+        self.data.quadLetter = ql
 
     def resetData(self):
         self.data.canSwitchFromHand = False
@@ -283,10 +295,11 @@ class dataStorage():
 
     def mousePressed(self, event):
         column = ((event.x - self.data.squareLeft) // self.data.squareSize)
-        if (column > 14 or column < 0):
-            column = 225        # if outside of board, column is only used for the board
+        if (column > (boardKeeper.BOARDSIZE-1) or column < 0):
+            # if outside of board, column is only used for the board
+            column = (boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE)
         row = ((event.y - self.data.squareTop) // self.data.squareSize)
-        spot = row*15 + column          # spot in grid
+        spot = row*boardKeeper.BOARDSIZE + column          # spot in grid
         onTemporarySpot = spot in self.data.temporaryBoardLocations
         onEmptySpot = spot in self.data.emptyBoardLocations
 
@@ -382,21 +395,25 @@ class dataStorage():
                            data.squareTop + (row+0.5)*data.squareSize,
                            text=letter, font="Arial 10")
 
+        canvas.create_text(data.squareLeft + (column+0.85)*data.squareSize,
+                           data.squareTop + (row+0.85)*data.squareSize,
+                           text=("" if letter == '-' else EV.dictionary[letter]), font="Arial 6")
+
     def redrawAll(self, canvas):
         data = self.data
 
         spotList = []           # used to make a list of spots for the board
-        for i in range(225):
+        for i in range(boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE):
             spotList.append(i)
 
         # instruction background
-        canvas.create_rectangle(0, 0, 1000, 600, fill=data.backgroundFill)
+        canvas.create_rectangle(0, 0, 1920, 1080, fill=data.backgroundFill)
         canvas.create_rectangle(
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
 
         for (letter, spot) in zip(data.board, spotList):
-            row = spot//15
-            column = spot % 15
+            row = spot // boardKeeper.BOARDSIZE
+            column = spot % boardKeeper.BOARDSIZE
             letter = data.board[spot]
             if spot in data.emptyBoardLocations:
                 if spot in data.tripleWord:
@@ -411,6 +428,17 @@ class dataStorage():
                 elif spot in data.tripleLetter:
                     self.drawBoardSquare(
                         canvas, row, column, letter, data.tripleLetterFill)
+
+                elif spot in data.quadLetter:
+                    self.drawBoardSquare(
+                        canvas, row, column, letter, data.quadLetterFill)
+
+                elif spot in data.quadWord:
+                    self.drawBoardSquare(
+                        canvas, row, column, letter, data.quadWordFill)
+                elif spot == ((boardKeeper.BOARDSIZE*boardKeeper.BOARDSIZE)//2):
+                    self.drawBoardSquare(
+                        canvas, row, column, letter, "#28d122")
                 else:
                     self.drawBoardSquare(
                         canvas, row, column, letter, data.emptySquareFill)

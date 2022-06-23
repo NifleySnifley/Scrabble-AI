@@ -1,6 +1,6 @@
-"# Scrabble" 
+# "Scrabble AI" 
 
-Welcome to playing Scrabble with an AI!
+Welcome to a Scrabble AI playing Scrabble with an AI!
 Contained here are some of the instructions for using this repository.
 
 ## Requirements
