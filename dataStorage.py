@@ -1,7 +1,10 @@
+from tkinter import PhotoImage
 import colorsys
 from random import random
 import boardKeeper as BK
 import extraValue as EV
+import time
+import colorutils
 boardKeeper = BK.boardKeeper()
 
 
@@ -13,7 +16,7 @@ class dataStorage():
         self.data.squareLeft = 20
         self.data.squareTop = 70
         self.data.backgroundFill = "#F5CDCD"
-        self.data.instructionFill = "#F5FDFD"
+        self.data.instructionFill = "#e5fdfd"
         self.data.emptySquareFill = "#E5FDFD"
 
         self.data.tripleWordFill = "#ff5500"
@@ -397,11 +400,11 @@ class dataStorage():
                                 fill=fillColor)
         canvas.create_text(data.squareLeft + (column+0.5)*data.squareSize,
                            data.squareTop + (row+0.5)*data.squareSize,
-                           text=letter, font="Arial 10")
+                           text=letter, font=("Comic Sans MS", 10))
 
         canvas.create_text(data.squareLeft + (column+0.85)*data.squareSize,
                            data.squareTop + (row+0.85)*data.squareSize,
-                           text=("" if letter == '-' else EV.dictionary[letter]), font="Arial 6")
+                           text=("" if letter == '-' else EV.dictionary[letter]), font=("Comic Sans MS", 6))
 
     def redrawAll(self, canvas):
         data = self.data
@@ -411,7 +414,14 @@ class dataStorage():
             spotList.append(i)
 
         # instruction background
-        canvas.create_rectangle(0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.5)])}")
+        # canvas.create_rectangle(
+        #     0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.5)])}")
+        offset = random() * 360
+        for j in range(1080):
+            # time.sleep(0.05)
+            canvas.create_rectangle(
+                0, j, 1920, j, fill=colorutils.Color(hsv=((j * (360/1080) + offset) % 360, 1, 1)).hex, outline="")
+            # canvas.create_rectangle(0, 0, 1920, 1080, fill="#00ff00")
         canvas.create_rectangle(
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
 
@@ -456,7 +466,7 @@ class dataStorage():
 
         # draw the letter hand
         canvas.create_text(data.dataCenter+2, 345,
-                           text="Scrabble Hand", font="Arial 10")
+                           text="Scrabble Hand", font=("Arial", 10))
 
         indexList = []          # used to make a list of columns for the hand of letters
         for i in range(len(data.letterHand)):
@@ -478,43 +488,43 @@ class dataStorage():
             canvas.create_text(data.dataCenter-115 + data.squareSize*(column+0.5),
                                360 + data.squareSize/2,
                                text=letter,
-                               font="Arial 10")
+                               font=("Arial", 10))
 
-        # draw the buttons
-        canvas.create_rectangle(650, 400, 700, 430, fill="orange")
-        canvas.create_rectangle(700, 400, 750, 430, fill="orange")
-        canvas.create_rectangle(750, 400, 800, 430, fill="orange")
-        canvas.create_rectangle(800, 400, 850, 430, fill="orange")
-        canvas.create_text(675, 415, text="Pass", font="Arial 10")
-        canvas.create_text(725, 415, text="Play", font="Arial 10")
-        canvas.create_text(775, 415, text="Switch", font="Arial 10")
-        canvas.create_text(825, 415, text="Search", font="Arial 10")
+        # # draw the buttons
+        # canvas.create_rectangle(650, 400, 700, 430, fill="orange")
+        # canvas.create_rectangle(700, 400, 750, 430, fill="orange")
+        # canvas.create_rectangle(750, 400, 800, 430, fill="orange")
+        # canvas.create_rectangle(800, 400, 850, 430, fill="orange")
+        # canvas.create_text(675, 415, text="Pass",
+        #                    font=("Arial", 10))
+        # canvas.create_text(725, 415, text="Play",
+        #                    font=("Arial", 10))
+        # canvas.create_text(775, 415, text="Switch",
+        #                    font=("Arial", 10))
+        # canvas.create_text(825, 415, text="Search",
+        #                    font=("Arial", 10))
 
         # draw the score
-        canvas.create_rectangle(data.dataCenter-140, 250,
-                                data.dataCenter+140, 290, fill="#66FF66")
+        canvas.create_rectangle(data.dataCenter-180, 250,
+                                data.dataCenter+180, 290, fill="#66FF66")
 
         # draw the text
-        canvas.create_text(265, 50, text="Scrabble Board", font="Arial 20")
+        canvas.create_text(265, 50, text="Scrabble Board",
+                           font=("Arial", 20))
         canvas.create_text(data.dataCenter, 60,
-                           text="Instructions", font="Arial 15")
-        canvas.create_text(data.dataCenter, 100,
-                           text="Pressing 'p' pauses/unpauses timer")
-        canvas.create_text(
-            data.dataCenter, 120, text="Red = 3x word, orange = 2x word, green = 3x letter, yellow = 2x letter")
-
+                           text="Instructions", font=("Arial", 15))
         canvas.create_text(data.dataCenter, 160, text=(
-            "Messages: "), font="Arial 15")
+            "Status: "), font=("Arial", 15))
         canvas.create_text(data.dataCenter, 190, text=(
-            data.message1), font="Arial 10")
+            data.message1), font=("Arial", 10))
         canvas.create_text(data.dataCenter, 210, text=(
-            data.message2), font="Arial 10")
+            data.message2), font=("Arial", 10))
         canvas.create_text(data.dataCenter, 230, text=(
-            data.message3), font="Arial 10")
+            data.message3), font=("Arial", 10))
 
         canvas.create_text(data.dataCenter, 260,
-                           text=("Scores:"), font="Arial 10")
+                           text=("Scores:"), font=("Arial", 10))
         canvas.create_text(data.dataCenter, 280, text=("Human score: " + str(data.humanScore) +
-                           "      Computer score: " + str(data.computerScore)), font="Arial 10")
+                           "      Computer score: " + str(data.computerScore)), font=("Arial", 10))
         canvas.create_text(data.dataCenter, 300, text=(
-            "Number of letters left in bag: " + str(data.letterBagSize)), font="Arial 10")
+            "Number of letters left in bag: " + str(data.letterBagSize)), font=("Arial", 10))

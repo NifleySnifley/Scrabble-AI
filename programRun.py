@@ -30,10 +30,12 @@ doc.close()
 
 trnctr = 0
 
+
 def background_moozic():
     while True:
         print("EEE")
         playsound.playsound("If I Had A Chicken.mp3")
+
 
 def run(width=1920, height=1080):
     def redrawAllWrapper(canvas, data):
@@ -99,8 +101,9 @@ def run(width=1920, height=1080):
                 removedLetters = letterBag.removeLetters(len(maxCombo[1]))
                 x.changeLetterBagSize(len(letterBag.letterBag))
                 p.addToHand(removedLetters)
-                data.message1 = f"Computer #{(trnctr&1) + 1} - " + " Letters used: " + str(maxCombo[1])
-                data.message2 = f"Earned: {maxCombo[0]}, Total Score: {p.points}";
+                data.message1 = f"Computer #{(trnctr&1) + 1} - " + \
+                    " Letters used: " + str(maxCombo[1])
+                data.message2 = f"Earned: {maxCombo[0]}, Total Score: {p.points}"
                 x.changeLetterHand(
                     p.letterHand)
             else:
@@ -114,7 +117,7 @@ def run(width=1920, height=1080):
                     p.letterHand)
             # x.data.computerTurn = !x.data.data
             # x.data.humanTurn = False
-            
+
             print(data.message1 + ", " + data.message2)
 
             if len(p.letterHand) == 0:
@@ -156,8 +159,8 @@ def run(width=1920, height=1080):
     redrawAllWrapper(canvas, x.data)    # this is to show the interface
     root.bind("<Button-1>", lambda event: mousePressedWrapper(event, canvas, x.data))
     root.bind("<Key>", lambda event: keyPressedWrapper(event, canvas, x.data))
-    # and launch the app
-    
+ # and launch the app
+
     threading.Thread(target=background_moozic, daemon=True).start()
     playsound.playsound("dump.mp3")
     while not x.data.endOfGame:
