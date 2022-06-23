@@ -68,14 +68,11 @@ def run(width=1920, height=1080):
             # case of computer turn
             t1 = (trnctr % 2) == 1
             trnctr += 1
-            print(trnctr)
 
             p = computerPlayer if t1 else humanPlayer
 
-            x.data.message1 = "It's the computer's turn"
-            x.data.message2 = 'Waiting for the computer...'
             x.data.message3 = ''
-            redrawAllWrapper(canvas, data)
+            # redrawAllWrapper(canvas, data)
 
             occupied = set(boardKeeper.refreshOccupied())
             attachments = set(boardKeeper.refreshAttachments())
@@ -102,9 +99,8 @@ def run(width=1920, height=1080):
                 removedLetters = letterBag.removeLetters(len(maxCombo[1]))
                 x.changeLetterBagSize(len(letterBag.letterBag))
                 p.addToHand(removedLetters)
-                data.message1 = "Score: " + \
-                    str(maxCombo[0]) + ", Letters used: " + str(maxCombo[1])
-
+                data.message1 = f"Computer #{(trnctr&1) + 1} - " + " Letters used: " + str(maxCombo[1])
+                data.message2 = f"Earned: {maxCombo[0]}, Total Score: {p.points}";
                 x.changeLetterHand(
                     p.letterHand)
             else:
@@ -118,6 +114,8 @@ def run(width=1920, height=1080):
                     p.letterHand)
             # x.data.computerTurn = !x.data.data
             # x.data.humanTurn = False
+            
+            print(data.message1 + ", " + data.message2)
 
             if len(p.letterHand) == 0:
                 x.data.endOfGame == True    # reached end of game
