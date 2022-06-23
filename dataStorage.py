@@ -3,6 +3,7 @@ from random import random
 import boardKeeper as BK
 import extraValue as EV
 boardKeeper = BK.boardKeeper()
+NUM_PLAYERS = 4
 
 
 class dataStorage():
@@ -24,7 +25,14 @@ class dataStorage():
         self.data.quadWordFill = "#ec2121"
 
         self.data.occupiedSquareFill = "magenta"
-        self.data.occupiedSquareFills = ["#66FF66", "#FF5555"]
+        self.data.occupiedSquareFills = [
+            "#66FF66",
+            "#FF5555",
+            "#FF55FF",
+            "#FFFF55",
+            "#66FFFF"
+            "#CCCCCC"
+        ]
         self.data.handSquareFill = "#66DDDD"
         self.data.squareSize = 23
 
@@ -50,8 +58,7 @@ class dataStorage():
         self.data.firstClickLetter = '_'
 
         self.data.letterBagSize = 0
-        self.data.humanScore = 0
-        self.data.computerScore = 0
+        self.data.scores = [0 for _ in range(NUM_PLAYERS)]
 
         self.data.tripleWord = []
         self.data.doubleWord = []
@@ -60,8 +67,6 @@ class dataStorage():
         self.data.tripleLetter = []
         self.data.quadLetter = []
 
-        self.data.humanTurn = False
-        self.data.computerTurn = False
         self.data.passTurn = False
         self.data.playTurn = False
         self.data.switchTurn = False
@@ -74,11 +79,8 @@ class dataStorage():
         self.data.message2 = 'Click anywhere to start.'
         self.data.message3 = ''
 
-    def changeScore(self, score, forHuman):
-        if forHuman:
-            self.data.humanScore = score
-        else:
-            self.data.computerScore = score
+    def changeScore(self, score, pn):
+        self.data.scores[pn] = score
 
     def changeLetterBagSize(self, letterBagSize):
         self.data.letterBagSize = letterBagSize
@@ -411,7 +413,8 @@ class dataStorage():
             spotList.append(i)
 
         # instruction background
-        canvas.create_rectangle(0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.5)])}")
+        canvas.create_rectangle(
+            0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.7)])}")
         canvas.create_rectangle(
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
 
@@ -491,7 +494,7 @@ class dataStorage():
         canvas.create_text(825, 415, text="Search", font="Arial 10")
 
         # draw the score
-        canvas.create_rectangle(data.dataCenter-140, 250,
+        canvas.create_rectangle(data.dataCenter-140, 220,
                                 data.dataCenter+140, 290, fill="#66FF66")
 
         # draw the text
@@ -512,9 +515,9 @@ class dataStorage():
         canvas.create_text(data.dataCenter, 230, text=(
             data.message3), font="Arial 10")
 
-        canvas.create_text(data.dataCenter, 260,
-                           text=("Scores:"), font="Arial 10")
-        canvas.create_text(data.dataCenter, 280, text=("Human score: " + str(data.humanScore) +
-                           "      Computer score: " + str(data.computerScore)), font="Arial 10")
+        for pi in range(NUM_PLAYERS):
+            canvas.create_text(data.dataCenter, 235 + 15*pi,
+                               text=(f"Computer #{pi+1} score: {self.data.scores[pi]}"), font="Arial 8", fill=("#FF3333" if max(self.data.scores) == self.data.scores[pi] else "#000000"))
+
         canvas.create_text(data.dataCenter, 300, text=(
             "Number of letters left in bag: " + str(data.letterBagSize)), font="Arial 10")

@@ -8,7 +8,7 @@ class boardKeeper():
         self.board = "-" * (BOARDSIZE*BOARDSIZE)
         self.spaceOccupations = {}
 
-    def changeBoard(self, letterCombo, spaceCombo, player=0):
+    def changeBoard(self, letterCombo, spaceCombo, player):
         for (letter, space) in zip(letterCombo, spaceCombo):
             self.spaceOccupations[space] = player
             self.board = self.board[:space] + letter + self.board[space+1:]
