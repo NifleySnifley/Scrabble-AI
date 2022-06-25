@@ -1,5 +1,3 @@
-from tkinter import PhotoImage
-import colorsys
 from random import random
 import boardKeeper as BK
 import extraValue as EV
@@ -29,12 +27,16 @@ class dataStorage():
 
         self.data.occupiedSquareFill = "magenta"
         self.data.occupiedSquareFills = [
-            "#66FF66",
+            "#07cb07",
             "#FF5555",
             "#FF55FF",
             "#FFFF55",
-            "#66FFFF"
-            "#CCCCCC"
+            "#66FFFF",
+            "#CCCCCC",
+            "#ec9100",
+            "#9900da",
+            "#aa4f98",
+            "#385507"
         ]
         self.data.handSquareFill = "#66DDDD"
         self.data.squareSize = 23
@@ -408,7 +410,7 @@ class dataStorage():
                            data.squareTop + (row+0.85)*data.squareSize,
                            text=("" if letter == '-' else EV.dictionary[letter]), font=("Comic Sans MS", 6))
 
-    def redrawAll(self, canvas):
+    def redrawAll(self, canvas, trnctr):
         data = self.data
 
         spotList = []           # used to make a list of spots for the board
@@ -419,10 +421,11 @@ class dataStorage():
         # canvas.create_rectangle(
         #     0, 0, 1920, 1080, fill=f"#{''.join([hex(int(i*255))[2:].ljust(2, '0') for i in colorsys.hsv_to_rgb(random() * 360, 1, 0.5)])}")
         offset = random() * 360
+        multiplier = random() * 1.5
         for j in range(1080):
             # time.sleep(0.05)
             canvas.create_rectangle(
-                0, j, 1920, j, fill=colorutils.Color(hsv=((j * (360/1080) + offset) % 360, 1, 1)).hex, outline="")
+                0, j, 1920, j, fill=colorutils.Color(hsv=((j * (360/1080) * multiplier + offset) % 360, 1, 1)).hex, outline="")
             # canvas.create_rectangle(0, 0, 1920, 1080, fill="#00ff00")
         canvas.create_rectangle(
             data.dataCenter-190, 35, data.dataCenter+190, 460, fill=data.instructionFill)
@@ -476,18 +479,18 @@ class dataStorage():
 
         for (letter, column) in zip(data.letterHand, indexList):
             if letter == '-':
-                canvas.create_rectangle(data.dataCenter-115 + data.squareSize*column,
+                canvas.create_rectangle(data.dataCenter-80 + data.squareSize*column,
                                         360,
-                                        data.dataCenter-115 + data.squareSize*column + data.squareSize,
+                                        data.dataCenter-80 + data.squareSize*column + data.squareSize,
                                         360 + data.squareSize,
                                         fill=data.emptySquareFill)
             else:
-                canvas.create_rectangle(data.dataCenter-115 + data.squareSize*column,
+                canvas.create_rectangle(data.dataCenter-80 + data.squareSize*column,
                                         360,
-                                        data.dataCenter-115 + data.squareSize*column + data.squareSize,
+                                        data.dataCenter-80 + data.squareSize*column + data.squareSize,
                                         360 + data.squareSize,
                                         fill=data.handSquareFill)
-            canvas.create_text(data.dataCenter-115 + data.squareSize*(column+0.5),
+            canvas.create_text(data.dataCenter-80 + data.squareSize*(column+0.5),
                                360 + data.squareSize/2,
                                text=letter,
                                font=("Arial", 10))
@@ -507,27 +510,26 @@ class dataStorage():
         #                    font=("Arial", 10))
 
         # draw the score
-        canvas.create_rectangle(data.dataCenter-140, 220,
-                                data.dataCenter+140, 290, fill="#66FF66")
+        canvas.create_rectangle(data.dataCenter-140, 130,
+                                data.dataCenter+140, 295, fill="#c9dfdf")
 
         # draw the text
-        canvas.create_text(265, 50, text="Scrabble Board",
+        canvas.create_text(255, 50, text="Scrabble Board",
                            font=("Arial", 20))
-        canvas.create_text(data.dataCenter, 60,
-                           text="Instructions", font=("Arial", 15))
-        canvas.create_text(data.dataCenter, 160, text=(
+        canvas.create_text(data.dataCenter, 60, text=(
             "Status: "), font=("Arial", 15))
-        canvas.create_text(data.dataCenter, 190, text=(
+        canvas.create_text(data.dataCenter, 90, text=(
             data.message1), font=("Arial", 10))
-        canvas.create_text(data.dataCenter, 210, text=(
+        canvas.create_text(data.dataCenter, 110, text=(
             data.message2), font=("Arial", 10))
-        canvas.create_text(data.dataCenter, 230, text=(
+        canvas.create_text(data.dataCenter, 130, text=(
             data.message3), font=("Arial", 10))
 
-
         for pi in range(NUM_PLAYERS):
-            canvas.create_text(data.dataCenter, 235 + 15*pi,
-                               text=(f"Computer #{pi+1} score: {self.data.scores[pi]}"), font="Arial 8", fill=("#FF3333" if max(self.data.scores) == self.data.scores[pi] else "#000000"))
+            canvas.create_text(data.dataCenter - 80, 145 + 15 *
+                               pi, text="▶", fill=self.data.occupiedSquareFills[pi])
+            canvas.create_text(data.dataCenter, 145 + 15*pi,
+                               text=(f"Computer #{pi+1} score: {self.data.scores[pi]}"), font=("Arial", 8, "bold") if trnctr == pi else ("Arial", 8), fill=("#FF3333" if max(self.data.scores) == self.data.scores[pi] else "#000000"))
 
-        canvas.create_text(data.dataCenter, 300, text=(
+        canvas.create_text(data.dataCenter, 310, text=(
             "Number of letters left in bag: " + str(data.letterBagSize)), font=("Arial", 10))

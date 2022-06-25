@@ -33,19 +33,19 @@ comboReady = False
 
 players = [player.player() for _ in range(NUM_PLAYERS)]
 
+
 def background_moozic():
     while True:
         print("EEE")
         playsound.playsound("If I Had A Chicken.mp3")
 
 
-
 def run(width=1920, height=1080):
-    def redrawAllWrapper(canvas, data):
+    def redrawAllWrapper(canvas, data, trnctr):
         canvas.delete(ALL)
         canvas.create_rectangle(
             0, 0, data.width, data.height, fill='white', width=0)
-        x.redrawAll(canvas)
+        x.redrawAll(canvas, trnctr)
         canvas.update()
 
     def background_moozic():
@@ -94,7 +94,7 @@ def run(width=1920, height=1080):
         #         x.data.message2 = "It's a tie"
 
         while (not comboReady):
-            redrawAllWrapper(canvas, data)
+            redrawAllWrapper(canvas, data, trnctr)
         if (comboReady):
             if maxCombo[0] != -1:
                 playsound.playsound("place.mp3")
@@ -119,7 +119,7 @@ def run(width=1920, height=1080):
 
                 x.changeLetterHand(
                     players[trnctr].letterHand)
-                redrawAllWrapper(canvas, data)
+                redrawAllWrapper(canvas, data, trnctr)
             else:
                 x.data.message1 = f'Computer #{trnctr+1} is trying very hard'
                 x.data.message2 = ''
@@ -148,7 +148,7 @@ def run(width=1920, height=1080):
 
     def keyPressedWrapper(event, canvas, data):
         x.keyPressed(event)
-        redrawAllWrapper(canvas, data)
+        redrawAllWrapper(canvas, data, trnctr)
 
     # Initialize data
     class Struct(object):
@@ -175,7 +175,7 @@ def run(width=1920, height=1080):
     canvas = Canvas(root, width=x.data.width, height=x.data.height)
     canvas.pack()
     # set up events
-    redrawAllWrapper(canvas, x.data)    # this is to show the interface
+    redrawAllWrapper(canvas, x.data, trnctr)    # this is to show the interface
     root.bind("<Button-1>", lambda event: mousePressedWrapper(event, canvas, x.data))
     root.bind("<Key>", lambda event: keyPressedWrapper(event, canvas, x.data))
 
